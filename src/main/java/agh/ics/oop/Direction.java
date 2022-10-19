@@ -5,6 +5,6 @@ enum Direction {
     f,
     b,
     r,
-    l
+    l,
 }
 

@@ -32,4 +32,17 @@ public class World {
         run(dirs);
         System.out.println("System zakończył działanie");
     }
+    public static Direction[] changeStringToEnumArray(String[] args){
+        Direction[] EnumArray = new Direction[args.length];
+        for (int i = 0; i < args.length; i++){
+            switch(args[i]){
+                case "f" -> EnumArray[i] = Direction.f;
+                case "b" -> EnumArray[i] = Direction.b;
+                case "l" -> EnumArray[i] = Direction.l;
+                case "r" -> EnumArray[i] = Direction.r;
+                default -> System.out.println("Nieprawidłowa litera");
+            }
+        }
+        return EnumArray;
+    }
 }
