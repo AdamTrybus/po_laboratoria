@@ -1,6 +1,8 @@
 package agh.ics.oop;
 
-import java.util.Arrays;
+import java.util.List;
+
+import static agh.ics.oop.OptionsParser.parse;
 
 public class World {
 
@@ -27,10 +29,13 @@ public class World {
     }
 
     public static void main(String[] args) {
-        System.out.println("System wystartował");
-        Direction[] dirs = {Direction.f, Direction.b, Direction.l, Direction.r};
-        run(dirs);
-        System.out.println("System zakończył działanie");
+        Animal animal = new Animal();
+        System.out.println(animal.toString());
+        List<MoveDirection> directions = parse(args);
+        for(MoveDirection direction : directions){
+            animal.move(direction);
+        }
+        System.out.println(animal);
     }
     public static Direction[] changeStringToEnumArray(String[] args){
         Direction[] EnumArray = new Direction[args.length];
