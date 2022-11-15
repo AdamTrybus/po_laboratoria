@@ -4,16 +4,27 @@ public class Animal {
 
     private MapDirection orientation;
     private Vector2d position;
+    private IWorldMap map;
 
 
-    public Animal() {
+    public Animal(IWorldMap map) {
+        this(map, new Vector2d(2, 2));
+    }
+
+    public Animal(IWorldMap map, Vector2d initialPosition) {
         this.orientation = MapDirection.NORTH;
-        this.position = new Vector2d(2, 2);
+        this.position = initialPosition;
+        this.map = map;
     }
 
     @Override
     public String toString() {
-        return "Position: " + position.toString() + "\nDirection: " + orientation.toString();
+        return switch (this.orientation) {
+            case NORTH -> "N";
+            case WEST -> "W";
+            case SOUTH -> "S";
+            case EAST -> "E";
+        };
     }
 
     public MapDirection getAnimalOrientation() {
@@ -31,22 +42,22 @@ public class Animal {
 
 
     public void move(MoveDirection direction) {
+        Vector2d newPosition = position;
 
         switch (direction) {
             case RIGHT -> orientation = orientation.next();
             case LEFT -> orientation = orientation.previous();
             case FORWARD -> {
-                Vector2d newPosition = position.add(orientation.toUnitVector());
-                if (newPosition.follows(new Vector2d(0, 0)) && newPosition.precedes(new Vector2d(4, 4))) {
-                    position = newPosition;
-                }
+                newPosition = position.add(orientation.toUnitVector());
             }
             case BACKWARD -> {
-                Vector2d newPosition = position.subtract(orientation.toUnitVector());
-                if (newPosition.follows(new Vector2d(0, 0)) && newPosition.precedes(new Vector2d(4, 4))) {
-                    position = newPosition;
-                }
+                newPosition = position.subtract(orientation.toUnitVector());
             }
         }
+
+        if (map.canMoveTo(newPosition)) {
+            this.position = newPosition;
+        }
+
     }
 }

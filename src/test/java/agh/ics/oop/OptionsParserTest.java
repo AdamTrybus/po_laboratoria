@@ -2,17 +2,15 @@ package agh.ics.oop;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
-import static agh.ics.oop.OptionsParser.parse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class OptionsParserTest {
 
     @Test
     void parseTest() {
+        OptionsParser parser = new OptionsParser();
         String[] arguments = {"f", "  ", "ri", "r", "f"};
         MoveDirection[] moveDirections = {MoveDirection.FORWARD, MoveDirection.RIGHT, MoveDirection.FORWARD,};
-        assertEquals(Arrays.asList(moveDirections), parse(arguments));
+        assertArrayEquals(moveDirections, parser.parse(arguments));
     }
 }
