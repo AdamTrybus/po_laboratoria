@@ -1,10 +1,13 @@
 package agh.ics.oop;
 
+import java.util.ArrayList;
+
 public class Animal implements IMapElement{
 
     private MapDirection orientation;
     private Vector2d position;
     private IWorldMap map;
+    private ArrayList<IPositionChangeObserver> observers = new ArrayList();
 
 
     public Animal(IWorldMap map) {
@@ -40,6 +43,19 @@ public class Animal implements IMapElement{
         return this.position.equals(position);
     }
 
+    public void addObserver(IPositionChangeObserver observer){
+        observers.add(observer);
+    }
+
+    public void removeObserver(IPositionChangeObserver observer){
+        observers.remove(observer);
+    }
+
+    private void positionChanged(Vector2d oldposition, Vector2d newposition){
+        for(IPositionChangeObserver observer:observers){
+            observer.positionChanged(oldposition,newposition);
+        }
+    }
 
     public void move(MoveDirection direction) {
         Vector2d newPosition = position;
@@ -56,8 +72,10 @@ public class Animal implements IMapElement{
         }
 
         if (map.canMoveTo(newPosition)) {
+            positionChanged(this.position, newPosition);
             this.position = newPosition;
         }
 
     }
+
 }

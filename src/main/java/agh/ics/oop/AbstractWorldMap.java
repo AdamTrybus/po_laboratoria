@@ -1,21 +1,27 @@
 package agh.ics.oop;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public abstract class AbstractWorldMap implements IWorldMap {
+public abstract class AbstractWorldMap implements IWorldMap,  IPositionChangeObserver{
 
-    protected List<Animal> animalList = new ArrayList<Animal>();
-    protected List<Grass> grassList = new ArrayList<Grass>();
+    protected HashMap<Vector2d,Animal> animalList = new HashMap<>();
     protected MapVisualizer mapVisualizer = new MapVisualizer(this);
-    protected Vector2d lowerBound;
-    protected Vector2d upperBound;
+    abstract protected Vector2d getLowerBound();
+    abstract protected Vector2d getUpperBound();
     abstract public boolean canMoveTo(Vector2d position);
+
+    @Override
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition){
+        animalList.put(newPosition, animalList.get(oldPosition));
+        animalList.remove(oldPosition);
+    }
 
     @Override
     public boolean place(Animal animal) {
         if (this.canMoveTo(animal.getPosition())){
-            animalList.add(animal);
+            animalList.put(animal.getPosition(),animal);
             return true;
         }
         return false;
@@ -29,38 +35,12 @@ public abstract class AbstractWorldMap implements IWorldMap {
 
     @Override
     public Object objectAt(Vector2d position) {
-        for (Animal animal : animalList) {
-            if (animal.getPosition().equals(position)) {
-                return animal;
-            }
-        }
-
-        for (Grass grass : grassList) {
-            if (grass.getPosition().equals(position)) {
-                return grass;
-            }
-        }
-
-        return null;
+        return animalList.get(position);
     }
 
     @Override
     public String toString(){
-        boundsUpdate();
-        return this.mapVisualizer.draw(lowerBound, upperBound);
-    }
-
-    public void boundsUpdate(){
-        for (Animal animal : animalList){
-            this.lowerBound = lowerBound.lowerLeft(animal.getPosition());
-            this.upperBound = upperBound.upperRight(animal.getPosition());
-        }
-
-        for (Grass grass : grassList){
-            this.lowerBound = lowerBound.lowerLeft(grass.getPosition());
-            this.upperBound = upperBound.upperRight(grass.getPosition());
-        }
-
+        return this.mapVisualizer.draw(getLowerBound(), getUpperBound());
     }
 
 }

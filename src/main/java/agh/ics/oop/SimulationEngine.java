@@ -19,6 +19,7 @@ public class SimulationEngine implements IEngine {
             Animal animal = new Animal(map, position);
             if (map.place(animal)) {
                 animalList.add(animal);
+                animal.addObserver((IPositionChangeObserver) map);
             }
         }
     }

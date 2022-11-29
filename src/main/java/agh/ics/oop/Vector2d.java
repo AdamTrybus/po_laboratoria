@@ -46,11 +46,11 @@ public class Vector2d {
         return new Vector2d(-x,-y);
     }
     @Override
-    public boolean equals(Object other){
-        if(other instanceof Vector2d vector2dOther) {
-            return (x == vector2dOther.x && y == vector2dOther.y);
-        }
-        return false;
+    public boolean equals(Object obj){
+        if (obj == this) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Vector2d other = (Vector2d) obj;
+        return (x == other.x && y == other.y);
     }
     @Override
     public int hashCode() {

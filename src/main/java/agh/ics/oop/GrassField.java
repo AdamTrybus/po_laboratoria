@@ -1,35 +1,70 @@
 package agh.ics.oop;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class GrassField extends AbstractWorldMap{
-    private final int amountOfGrasses;
+    private final Map<Vector2d, Grass> grasses = new HashMap<>();
 
     public GrassField(int amountOfGrasses){
-        this.amountOfGrasses = amountOfGrasses;
-        this.grassList = new ArrayList<Grass>();
-        this.lowerBound = new Vector2d(0, 0);
-        this.upperBound = new Vector2d((int)Math.sqrt(amountOfGrasses*10), (int)Math.sqrt(amountOfGrasses*10));
+        int actualGrass = 0;
 
-        for (int i = 0; i < amountOfGrasses; i++){
-            randomGenerator();
+        while (actualGrass != amountOfGrasses){
+            Random generator = new Random();
+
+            int x = generator.nextInt( (int) Math.sqrt(amountOfGrasses*10) + 1);
+            int y = generator.nextInt( (int) Math.sqrt(amountOfGrasses*10) + 1);
+
+            Vector2d grassPosition = new Vector2d(x, y);
+            Grass newGrass = new Grass(grassPosition);
+
+            if (!isOccupied(grassPosition)){
+                grasses.put(grassPosition, newGrass);
+                actualGrass += 1;
+            }
+
         }
-        boundsUpdate();
     }
 
-    public void randomGenerator(){
-        Random generator = new Random();
+    @Override
+    public Object objectAt(Vector2d position) {
+        if (animalList.get(position) != null){
+            return animalList.get(position);
+        }
+        return grasses.get(position);
 
-        int x = generator.nextInt( (int) Math.sqrt(amountOfGrasses*10) + 1);
-        int y = generator.nextInt( (int) Math.sqrt(amountOfGrasses*10) + 1);
+    }
 
-        Vector2d grassPosition = new Vector2d(x, y);
+    @Override
+    protected Vector2d getLowerBound() {
+        Vector2d lowerBound = new Vector2d(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
-        if (!isOccupied(grassPosition)){
-            grassList.add(new Grass(grassPosition));
+        for (Vector2d position : animalList.keySet()){
+            lowerBound = lowerBound.lowerLeft(position);
         }
 
+        for (Vector2d position : grasses.keySet()){
+            lowerBound = lowerBound.lowerLeft(position);
+        }
+
+        return lowerBound;
+    }
+
+    @Override
+    protected Vector2d getUpperBound() {
+        Vector2d upperBound = new Vector2d(Integer.MIN_VALUE, Integer.MIN_VALUE);
+
+        for (Vector2d position : animalList.keySet()){
+            upperBound = upperBound.upperRight(position);
+        }
+
+        for (Vector2d position : grasses.keySet()){
+            upperBound = upperBound.upperRight(position);
+        }
+
+        return upperBound;
     }
 
     @Override
