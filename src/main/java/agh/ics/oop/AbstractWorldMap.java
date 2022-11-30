@@ -8,23 +8,28 @@ public abstract class AbstractWorldMap implements IWorldMap,  IPositionChangeObs
 
     protected HashMap<Vector2d,Animal> animalList = new HashMap<>();
     protected MapVisualizer mapVisualizer = new MapVisualizer(this);
-    abstract protected Vector2d getLowerBound();
-    abstract protected Vector2d getUpperBound();
+    abstract public Vector2d getLowerBound();
+    abstract public Vector2d getUpperBound();
     abstract public boolean canMoveTo(Vector2d position);
+    protected MapBoundary mapBoundary = new MapBoundary();
 
     @Override
     public void positionChanged(Vector2d oldPosition, Vector2d newPosition){
-        animalList.put(newPosition, animalList.get(oldPosition));
+        Animal animal = animalList.get(oldPosition);
         animalList.remove(oldPosition);
+        animalList.put(newPosition, animal);
+        mapBoundary.positionChanged(oldPosition, newPosition);
     }
 
     @Override
-    public boolean place(Animal animal) {
-        if (this.canMoveTo(animal.getPosition())){
+    public boolean place(Animal animal) throws IllegalArgumentException{
+        if (canMoveTo(animal.getPosition())){
             animalList.put(animal.getPosition(),animal);
+            animal.addObserver(this);
+            mapBoundary.addPosition(animal.getPosition());
             return true;
         }
-        return false;
+        throw new IllegalArgumentException(animal.getPosition() + "is not legal move specification");
     }
 
     @Override

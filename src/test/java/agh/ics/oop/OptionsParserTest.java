@@ -13,4 +13,13 @@ class OptionsParserTest {
         MoveDirection[] moveDirections = {MoveDirection.FORWARD, MoveDirection.RIGHT, MoveDirection.FORWARD,};
         assertArrayEquals(moveDirections, parser.parse(arguments));
     }
+
+    @Test
+    public void exceptionTest(){
+        String[] move = {"foward", "forward", "p", "backward", "l"};
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            new OptionsParser().parse(move);
+        });
+        assertEquals("foward" + " is not legal move specification", exception.getMessage());
+    }
 }
